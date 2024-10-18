@@ -1,0 +1,30 @@
+data = xr.open_dataset('/run/media/adamh/X6/test_levels/net_cdf_monitor.nc')
+my_state_1, my_state_2 = data.isel(time=0), data.isel(time=1)
+#  Calculate residuals
+residual_surface_pressure = my_state_1['surface_air_pressure'].values/100 - surface_pressure_regrid.values/100
+residual_air_temperature = my_state_1['air_temperature'].values - air_temperature_interpolated.values
+residual_eastward_wind = my_state_1['eastward_wind'].values - eastward_wind_interpolated.values
+residual_northward_wind = my_state_1['northward_wind'].values - northward_wind_interpolated.values
+residual_divergence_wind = my_state_1['divergence_of_wind'].values - divergence_of_wind_interpolated.values
+residual_relative_vorticity = my_state_1['atmosphere_relative_vorticity'].values - relative_vorticity_interpolated.values
+residual_surface_geopotential = my_state_1['surface_geopotential'].values - surface_geopotential_regrid.values
+residual_specific_humidity = my_state_1['specific_humidity'].values - specific_humidity_interpolated.values
+
+def residual_info_print(residual_str, residual, p=None):
+    if p==None:
+        print(f"{residual_str:<35} {my_state[residual_str].units:<15} {residual.mean():<30} {residual.max():<30} {residual.min():<30}")
+    else:
+        print(f"{residual_str:<35} {'hPa':<15} {residual.mean():<30} {residual.max():<30} {residual.min():<30}")
+
+
+print(f"{'Variable':<35} {'Units':<15} {'Mean':<30} {'Max':<30} {'Min':<30}")
+print("="*140)
+
+residual_info_print('surface_air_pressure', residual_surface_pressure, p=True)
+residual_info_print('air_temperature', residual_air_temperature)
+residual_info_print('eastward_wind', residual_eastward_wind)
+residual_info_print('northward_wind', residual_northward_wind)
+residual_info_print('divergence_of_wind', residual_divergence_wind)
+residual_info_print('atmosphere_relative_vorticity', residual_relative_vorticity)
+residual_info_print('surface_geopotential', residual_surface_geopotential)
+residual_info_print('specific_humidity', residual_specific_humidity)
